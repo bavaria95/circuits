@@ -99,7 +99,10 @@ def create_graph_from_file(file):
 
 	return graph, source_from, source_to, emf
 
-def print_currencies(graph, x):
+def print_output(graph, x):
+	nodes_out = []
+	edges_out = []
+
 	edges = nx.edges(graph)
 	for edge in edges:
 		R = graph.get_edge_data(edge[0], edge[1])['weight']     # resistance between 2 nodes
@@ -111,7 +114,19 @@ def print_currencies(graph, x):
 		else:
 			I = float(U) / R 	# from Ohm's law
 			
-		print(edge[0], edge[1], I)
+		edges_out.append({'from': edge[0], 'to': edge[1], 'value': I, 'label': R})
+
+	nodes = nx.nodes(graph)
+	for node in nodes:
+		nodes_out.append({'id': node, 'label': str(node)})
+
+	f = open('data.jsonp', 'w')
+
+	f.write("nodes = " + str(nodes_out) + ";\n")
+
+	f.write("edges = " + str(edges_out) + ";")
+
+	f.close()
 
 graph, source_from, source_to, emf = create_graph_from_file('input.txt')
 
@@ -123,10 +138,10 @@ z = generate_z(graph)
 
 x = np.linalg.solve(A, z) 
 
-print_currencies(graph, x)
+print_output(graph, x)
 
 nx.draw_random(graph)
-plt.show()
+# plt.show()
 
 
 
